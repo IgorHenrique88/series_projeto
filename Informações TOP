@@ -1,0 +1,2 @@
+As relações entre classes no laravel é um pouco diferente do apresentado na Orientação a OBJETO, nela 
+ocorre por de baixo dos panos, essa conexão acontece por conta de metodos declarados que os ligam.
