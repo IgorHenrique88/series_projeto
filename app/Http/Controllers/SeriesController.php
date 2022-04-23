@@ -5,6 +5,7 @@
     namespace App\Http\Controllers;
     use illuminate\Http\Request;
     use App\Serie;
+    use App\User;
     use App\Http\Requests\SeriesFormRequest;
     use App\Services\{CriadorDeSerie, DeleteDeSerie};
 
@@ -27,14 +28,26 @@
                 $request->qtd_episodeos
             );
 
+        
+            $users = User::all();
+            foreach($users as $indice => $user){
+
+                $multple = $indice + 1;
+                $email = new \App\Mail\NovaSerie(
+                    $request->nome,
+                    $request->qtd_temporadas,
+                    $request->qtd_episodeos
+                );
+                $email->subject = 'Nova Série Adicionada';
+                $quandoExecutar = now()->addSecond($multple*5);
+                \Illuminate\Support\Facades\Mail::to($user)->later($quandoExecutar, $email);
+            }
+
+
             $request->session() ->flash(
                     'mensagem', 
                     "Série {$serie->id} criada com sucesso {$serie->nome}."
             );
-            // $serie = new Serie();
-            // $serie->nome = $nome;
-            // var_dump($serie->save());
-            // echo "Série com ID {$serie->id} criada: {$serie->nome}";
             // No laravel quando tenho que retornar uma url posso usar a 
             // função redirect("Devo passar o que devo retornar")
 

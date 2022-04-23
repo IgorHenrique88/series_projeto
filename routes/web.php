@@ -35,3 +35,23 @@ Route::get('/sair', function (){
     \Illuminate\Support\Facades\Auth::logout();
     return redirect('/entrar');
 });
+
+Route::get('/visualizarEmail', function (){
+    return new \App\Mail\NovaSerie(
+        'Arrow',15,5
+    );
+});
+Route::get('/enviarEmail', function (){
+    $email = new \App\Mail\NovaSerie(
+        'Arrow',15,5
+    );
+
+    $email->subject = 'Nova Série Adicionada';
+    $users = (object) [
+        'name'=>'Igor',
+        'email'=>'igor@teste.com'
+    ];
+
+    \Illuminate\Support\Facades\Mail::to($users)->send($email);
+    return 'Email enviado';
+});
