@@ -6,6 +6,7 @@
     use illuminate\Http\Request;
     use App\Serie;
     use App\User;
+    use App\Events\NovaSerie;
     use App\Http\Requests\SeriesFormRequest;
     use App\Services\{CriadorDeSerie, DeleteDeSerie};
 
@@ -28,22 +29,15 @@
                 $request->qtd_episodeos
             );
 
-        
-            $users = User::all();
-            foreach($users as $indice => $user){
+            
+            $eventNovaSerie = new NovaSerie(
+                $request->nome,
+                $request->qtd_temporadas,
+                $request->qtd_episodeos  
+            );
 
-                $multple = $indice + 1;
-                $email = new \App\Mail\NovaSerie(
-                    $request->nome,
-                    $request->qtd_temporadas,
-                    $request->qtd_episodeos
-                );
-                $email->subject = 'Nova Série Adicionada';
-                $quandoExecutar = now()->addSecond($multple*5);
-                \Illuminate\Support\Facades\Mail::to($user)->later($quandoExecutar, $email);
-            }
-
-
+            event($eventNovaSerie);
+            
             $request->session() ->flash(
                     'mensagem', 
                     "Série {$serie->id} criada com sucesso {$serie->nome}."
